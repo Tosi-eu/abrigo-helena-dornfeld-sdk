@@ -1,7 +1,3 @@
-/**
- * Tipos comuns de API (paginação, respostas).
- */
-
 export interface PaginatedResponse<T> {
   data: T[];
   total?: number;

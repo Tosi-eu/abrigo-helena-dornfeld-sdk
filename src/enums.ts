@@ -1,10 +1,6 @@
-/**
- * Enums compartilhados do domínio Abrigo.
- */
-
 export enum OperationType {
   MEDICINE = "medicamento",
-  INPUT = "insumo",
+  INPUT = "insumo", 
 }
 
 export enum OriginType {

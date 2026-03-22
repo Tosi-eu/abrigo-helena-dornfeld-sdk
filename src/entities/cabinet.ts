@@ -1,6 +1,3 @@
-/**
- * Armário e gaveta.
- */
 
 export interface Cabinet {
   numero: number;

@@ -1,6 +1,3 @@
-/**
- * Insumo (cadastro).
- */
 
 export interface Input {
   id?: number;

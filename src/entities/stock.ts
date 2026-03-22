@@ -1,6 +1,3 @@
-/**
- * Estoque (itens em estoque, filtros, status).
- */
 
 import type { OperationType, ItemStockType } from "../enums";
 

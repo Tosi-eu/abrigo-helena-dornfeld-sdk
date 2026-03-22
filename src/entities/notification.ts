@@ -1,6 +1,3 @@
-/**
- * Notificações / eventos de reposição.
- */
 
 export interface AdminNotificationItem {
   id: number;
