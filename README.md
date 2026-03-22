@@ -1,46 +1,34 @@
-# @abrigo/sdk
+# @porto-sdk/sdk
 
-Tipos e entidades compartilhados do sistema Abrigo (estoque, medicamentos, residentes, movimentações). Use no backend e no frontend para manter uma única fonte de verdade.
+Tipos e entidades compartilhados do sistema Porto (estoque, medicamentos, residentes, movimentações). Use no backend e no frontend para manter uma única fonte de verdade.
 
 ## Instalação
 
-```bash
-npm install @abrigo/sdk
-```
-
-Ou, durante o desenvolvimento local (caminho ou link):
+**A partir do npm** (repositório publicado na org `porto-sdk`):
 
 ```bash
-npm install ../abrigo-sdk
-# ou
-npm link ../abrigo-sdk
+npm install @porto-sdk/sdk
 ```
+
+**No monorepo Porto** o `backend` e o `frontend` usam `file:../sdk` no `package.json`; não é necessário publicar para desenvolver localmente.
+
+## Publicar no npm
+
+1. Cria a organização **porto-sdk** em [npmjs.com](https://www.npmjs.com/org/create) (o scope será `@porto-sdk`).
+2. Confirma que estás autenticado: `npm login` / `npm whoami`.
+3. Na pasta `sdk`:
+
+```bash
+npm run build
+npm publish --access public
+```
+
+O `package.json` já inclui `"publishConfig": { "access": "public" }` e `prepublishOnly` corre o build.
 
 ## Uso
 
 ```ts
-import {
-  SectorType,
-  Resident,
-  Medicine,
-  StockItem,
-  StockFilterType,
-  PaginatedResponse,
-} from "@abrigo/sdk";
+import type { PublicTenantListItem, TenantConfigResponse } from "@porto-sdk/sdk";
 ```
 
-## Conteúdo
-
-- **enums**: `OperationType`, `ItemStockType`, `MovementType`, `SectorType`, `EventStatus`, `NotificationEventType`, etc.
-- **entities**: `Resident`, `Medicine`, `Input`, `Cabinet`, `Drawer`, `StockItem`, `Movement`, `LoggedUser`, `TenantProfile`, `PublicTenantBranding`, …
-- **pricing**: contratos HTTP do `porto-api-price-search` (`PriceSearchRequestBody`, `PriceSearchHttpResponse`, …).
-- **api**: `PaginatedResponse`, `AdminMetricsResponse`, `AdminActiveUserThisMonth`, etc.
-
-## Build
-
-```bash
-npm install
-npm run build
-```
-
-O pacote pode ser publicado no npm (público ou privado) ou usado via link local até você substituir as interfaces nos repositórios do backend e frontend.
+Contratos multi-tenant (login, branding) na documentação do produto Porto.
