@@ -32,7 +32,8 @@ import {
 ## Conteúdo
 
 - **enums**: `OperationType`, `ItemStockType`, `MovementType`, `SectorType`, `EventStatus`, `NotificationEventType`, etc.
-- **entities**: `Resident`, `Medicine`, `Input`, `Cabinet`, `Drawer`, `StockItem`, `Movement`, `LoggedUser`, etc.
+- **entities**: `Resident`, `Medicine`, `Input`, `Cabinet`, `Drawer`, `StockItem`, `Movement`, `LoggedUser`, `TenantProfile`, `PublicTenantBranding`, …
+- **pricing**: contratos HTTP do `porto-api-price-search` (`PriceSearchRequestBody`, `PriceSearchHttpResponse`, …).
 - **api**: `PaginatedResponse`, `AdminMetricsResponse`, `AdminActiveUserThisMonth`, etc.
 
 ## Build

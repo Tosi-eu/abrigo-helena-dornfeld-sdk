@@ -1,6 +1,3 @@
-/**
- * Movimentação de estoque.
- */
 
 import type { MovementType } from "../enums.js";
 

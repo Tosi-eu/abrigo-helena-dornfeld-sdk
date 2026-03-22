@@ -1,7 +1,3 @@
-/**
- * Medicamento (cadastro).
- */
-
 export interface Medicine {
   id?: number;
   nome: string;

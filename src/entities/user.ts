@@ -1,7 +1,3 @@
-/**
- * Entidades e tipos de usuário / login.
- */
-
 export interface UserPermissions {
   read: boolean;
   create: boolean;
