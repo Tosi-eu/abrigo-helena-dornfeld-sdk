@@ -11,15 +11,6 @@ export interface AdminMetricsResponse {
   activeUsersThisMonth: number;
 }
 
-export type TenantModulesConfig = {
-  enabled: string[];
-};
-
-export type TenantConfigResponse = {
-  tenantId: number;
-  modules: TenantModulesConfig;
-};
-
 export interface AdminActiveUserThisMonth {
   id: number;
   login: string;

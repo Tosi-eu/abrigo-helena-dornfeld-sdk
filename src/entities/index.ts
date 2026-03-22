@@ -1,4 +1,5 @@
 export * from "./user";
+export * from "./tenant";
 export * from "./resident";
 export * from "./medicine";
 export * from "./input";
