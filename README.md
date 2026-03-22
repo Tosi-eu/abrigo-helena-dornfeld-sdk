@@ -8,9 +8,27 @@ Tipos e entidades compartilhados do sistema Porto (estoque, medicamentos, reside
 
 ```bash
 npm install @porto-sdk/sdk
+# ou
+pnpm add @porto-sdk/sdk
 ```
 
-**No monorepo Porto** o `backend` e o `frontend` usam `file:../sdk` no `package.json`; não é necessário publicar para desenvolver localmente.
+O `backend` e o `frontend` do monorepo usam **`"@porto-sdk/sdk": "^0.1.0"`** — o pacote é obtido do registry (não é necessário ter a pasta `sdk` ao lado do app). Isto permite CI em repositórios só-frontend ou só-backend.
+
+## Desenvolver o SDK localmente (sem publicar)
+
+Na pasta `sdk`, depois de alterar código:
+
+```bash
+cd sdk && npm run build && npm link
+cd ../frontend && npm link @porto-sdk/sdk
+# ou com pnpm: pnpm link --global (conforme doc) ou pnpm add @porto-sdk/sdk@file:../sdk
+```
+
+Alternativa temporária no `package.json` do app:
+
+```json
+"@porto-sdk/sdk": "file:../sdk"
+```
 
 ## Publicar no npm
 
