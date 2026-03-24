@@ -7,3 +7,4 @@ export * from "./cabinet";
 export * from "./stock";
 export * from "./movement";
 export * from "./notification";
+export * from "./persistence";

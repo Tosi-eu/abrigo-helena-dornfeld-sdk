@@ -19,3 +19,7 @@ export interface Login {
   login: string;
   password: string;
 }
+
+export interface LoginCreateWithTenant extends Login {
+  tenant_id: number;
+}
