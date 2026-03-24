@@ -1,8 +1,3 @@
-/**
- * Formas usadas pelos repositórios / Sequelize (persistência).
- * Complementam as entidades “de API” onde o contrato difere (ex.: categoria_id vs nome).
- */
-
 export interface CabinetPersist {
   numero: number;
   categoria_id: number;
@@ -24,7 +19,6 @@ export interface MedicineStockRecord {
   casela_id: number | null;
   setor: string;
   lote?: string | null;
-  /** Ex.: valores do enum de persistência no backend (`active` / `suspended`). */
   status?: string;
   suspended_at?: Date | null;
   observacao?: string | null;
