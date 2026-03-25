@@ -23,3 +23,9 @@ export interface Login {
 export interface LoginCreateWithTenant extends Login {
   tenant_id: number;
 }
+
+/** Abrigos onde o mesmo e-mail tem conta (consulta pública pré-autenticação). */
+export interface LoginTenantSummary {
+  slug: string;
+  label: string;
+}
