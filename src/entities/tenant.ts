@@ -32,6 +32,7 @@ export type TenantProfile = {
   name: string;
   brandName: string | null;
   logoUrl: string | null;
+  brandingUpdatedAt?: string | null;
 };
 
 export type TenantModulesConfig = {
