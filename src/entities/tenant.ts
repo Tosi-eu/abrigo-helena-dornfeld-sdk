@@ -38,12 +38,21 @@ export type TenantModulesConfig = {
   enabled: string[];
 };
 
+export type TenantUiDisplayCasela = "numero" | "nome";
+export type TenantUiDisplayGaveta = "numero" | "categoria";
+
+export type TenantUiDisplay = {
+  casela: TenantUiDisplayCasela;
+  gaveta: TenantUiDisplayGaveta;
+};
+
 export type TenantConfigResponse = {
   tenantId: number;
   tenant: TenantProfile | null;
   modules: TenantModulesConfig;
   modulesConfigured?: boolean;
   onboardingComplete?: boolean;
+  uiDisplay?: TenantUiDisplay;
 };
 
 export type UpdateTenantBrandingPayload = {
