@@ -40,10 +40,17 @@ export type TenantModulesConfig = {
 };
 
 export type TenantUiDisplayCasela = "numero" | "nome";
+export type TenantUiDisplayCaselaSetor =
+  | "farmacia"
+  | "enfermagem"
+  | "todos";
+export type TenantUiDisplayArmario = "numero" | "categoria";
 export type TenantUiDisplayGaveta = "numero" | "categoria";
 
 export type TenantUiDisplay = {
   casela: TenantUiDisplayCasela;
+  caselaSetor: TenantUiDisplayCaselaSetor;
+  armario: TenantUiDisplayArmario;
   gaveta: TenantUiDisplayGaveta;
 };
 
