@@ -19,3 +19,12 @@ export interface Login {
   login: string;
   password: string;
 }
+
+export interface LoginCreateWithTenant extends Login {
+  tenant_id: number;
+}
+
+export interface LoginTenantSummary {
+  slug: string;
+  label: string;
+}

@@ -32,10 +32,26 @@ export type TenantProfile = {
   name: string;
   brandName: string | null;
   logoUrl: string | null;
+  brandingUpdatedAt?: string | null;
 };
 
 export type TenantModulesConfig = {
   enabled: string[];
+};
+
+export type TenantUiDisplayCasela = "numero" | "nome";
+export type TenantUiDisplayCaselaSetor =
+  | "farmacia"
+  | "enfermagem"
+  | "todos";
+export type TenantUiDisplayArmario = "numero" | "categoria";
+export type TenantUiDisplayGaveta = "numero" | "categoria";
+
+export type TenantUiDisplay = {
+  casela: TenantUiDisplayCasela;
+  caselaSetor: TenantUiDisplayCaselaSetor;
+  armario: TenantUiDisplayArmario;
+  gaveta: TenantUiDisplayGaveta;
 };
 
 export type TenantConfigResponse = {
@@ -44,6 +60,7 @@ export type TenantConfigResponse = {
   modules: TenantModulesConfig;
   modulesConfigured?: boolean;
   onboardingComplete?: boolean;
+  uiDisplay?: TenantUiDisplay;
 };
 
 export type UpdateTenantBrandingPayload = {
