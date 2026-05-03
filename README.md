@@ -1,52 +1,77 @@
-# @porto-sdk/sdk
+# @stokio/sdk
 
-Tipos e entidades compartilhados do sistema Porto (estoque, medicamentos, residentes, movimentações). Use no backend e no frontend para manter uma única fonte de verdade.
+Shared TypeScript **contracts**, **entities**, **enums**, **canonical errors**, and a **typed HTTP client** (`createStokioClient`) for Stokio (stock, medicines, residents, movements, admin, tenant, etc.). Use the same package in backend and frontend to keep a single source of truth.
 
-## Instalação
+The published `dist/` is **CommonJS** (`require`) so Node (Nest, Temporal worker, scripts) resolves subpaths correctly; bundlers (Next.js, Vite) consume it without extra configuration.
 
-**A partir do npm** (repositório publicado na org `porto-sdk`):
+## Install
 
-```bash
-npm install @porto-sdk/sdk
-# ou
-pnpm add @porto-sdk/sdk
-```
-
-O `backend` e o `frontend` do monorepo usam **`"@porto-sdk/sdk": "^0.1.0"`** — o pacote é obtido do registry (não é necessário ter a pasta `sdk` ao lado do app). Isto permite CI em repositórios só-frontend ou só-backend.
-
-## Desenvolver o SDK localmente (sem publicar)
-
-Na pasta `sdk`, depois de alterar código:
+From the public npm registry:
 
 ```bash
-cd sdk && npm run build && npm link
-cd ../frontend && npm link @porto-sdk/sdk
-# ou com pnpm: pnpm link --global (conforme doc) ou pnpm add @porto-sdk/sdk@file:../sdk
+npm install @stokio/sdk
+# or
+pnpm add @stokio/sdk
 ```
 
-Alternativa temporária no `package.json` do app:
+## Usage
 
-```json
-"@porto-sdk/sdk": "file:../sdk"
-```
-
-## Publicar no npm
-
-1. Cria a organização **porto-sdk** em [npmjs.com](https://www.npmjs.com/org/create) (o scope será `@porto-sdk`).
-2. Confirma que estás autenticado: `npm login` / `npm whoami`.
-3. Na pasta `sdk`:
-
-```bash
-npm run build
-npm publish --access public
-```
-
-O `package.json` já inclui `"publishConfig": { "access": "public" }` e `prepublishOnly` corre o build.
-
-## Uso
+### Types and errors
 
 ```ts
-import type { PublicTenantListItem, TenantConfigResponse } from "@porto-sdk/sdk";
+import type { PublicTenantListItem, TenantConfigResponse } from "@stokio/sdk";
+import { toCanonicalError } from "@stokio/sdk";
 ```
 
-Contratos multi-tenant (login, branding) na documentação do produto Porto.
+### HTTP client (`createStokioClient`)
+
+The client is **environment-agnostic**: pass `baseUrl`, `getToken`, and optional hooks for preview mode / error UX (as in the Next.js app).
+
+```ts
+import { createStokioClient, StokioApiError } from "@stokio/sdk";
+
+const client = createStokioClient({
+  baseUrl: "https://api.example.com/api/v1",
+  getToken: () => sessionStorage.getItem("authToken"),
+  onBeforeRequest: async ({ path, method }) => {
+    // e.g. block mutations in demo mode
+  },
+  onHttpError: (err: StokioApiError) => {
+    // Map 401/403 to your router or throw user-facing errors; must throw/reject.
+    throw err;
+  },
+});
+
+// Modular API (also available as client.get/post/... for raw paths)
+await client.auth.login("user", "pass", "tenant-slug");
+await client.movements.listMedicineMovements({ page: 1, limit: 10, type: "entrada" });
+await client.tenant.config();
+```
+
+`createStokioClient` returns an object that merges `StokioHttp` (`get`, `post`, `put`, `patch`, `delete`) with resource groups (`movements`, `stock`, `auth`, `tenant`, `admin`, `public`, `imports`, …).
+
+### Node-only exports (`pg_dump` gzip / rewrite)
+
+The default entry (`@stokio/sdk`) is safe for **browser and Next.js client bundles**. Helpers that use Node built-ins (`node:zlib`, etc.) are exported only from:
+
+```ts
+import { gunzipIfNeeded } from "@stokio/sdk/server";
+```
+
+Do **not** import `@stokio/sdk/server` from browser or shared client code.
+
+### Optional: upload progress (browser)
+
+```ts
+import { uploadTenantBrandingLogoWithProgress } from "@stokio/sdk";
+
+await uploadTenantBrandingLogoWithProgress({
+  baseUrl,
+  file,
+  brandName,
+  getToken: () => token,
+  callbacks: { onUploadProgress: (p) => {} },
+});
+```
+
+Multi-tenant contracts (login, branding) are documented in the Stokio product docs.
