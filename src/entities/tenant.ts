@@ -47,11 +47,14 @@ export type TenantUiDisplayCaselaSetor =
 export type TenantUiDisplayArmario = "numero" | "categoria";
 export type TenantUiDisplayGaveta = "numero" | "categoria";
 
+export type TenantUiDisplayDefaultReportFormat = "pdf" | "xlsx";
+
 export type TenantUiDisplay = {
   casela: TenantUiDisplayCasela;
   caselaSetor: TenantUiDisplayCaselaSetor;
   armario: TenantUiDisplayArmario;
   gaveta: TenantUiDisplayGaveta;
+  defaultReportFormat?: TenantUiDisplayDefaultReportFormat;
 };
 
 export type TenantConfigResponse = {
