@@ -813,9 +813,39 @@ export function buildStokioApi(http: StokioHttp) {
         }>("/admin/stock-history", { params }),
 
       exportCsvBlob: (queryParams: Record<string, string>) =>
-        http.get<Blob>(`/admin/export?${new URLSearchParams(queryParams).toString()}`, {
-          responseType: "blob",
-        }),
+        (async () => {
+          const type = String(queryParams.type ?? "").trim() || "export";
+          const createRes = await http.post<{
+            jobId: string;
+            accepted?: boolean;
+          }>("/relatorios/jobs", undefined, {
+            params: { ...queryParams, type, format: "csv" },
+          });
+
+          const jobId = String((createRes as any)?.jobId ?? "");
+          if (!jobId) throw new Error("Falha ao iniciar exportação (jobId vazio)");
+
+          const startedAt = Date.now();
+          for (;;) {
+            const j = await http.get<{ status?: string; error?: string | null }>(
+              `/relatorios/jobs/${encodeURIComponent(jobId)}`,
+            );
+            const s = String((j as any)?.status ?? "");
+            if (s === "succeeded") break;
+            if (s === "failed") {
+              throw new Error(String((j as any)?.error ?? "Falha ao gerar exportação"));
+            }
+            if (Date.now() - startedAt > 5 * 60_000) {
+              throw new Error("Geração demorando demais. Tente novamente.");
+            }
+            await new Promise((r) => setTimeout(r, 1500));
+          }
+
+          return http.get<Blob>(
+            `/relatorios/jobs/${encodeURIComponent(jobId)}/download`,
+            { responseType: "blob" },
+          );
+        })(),
     },
   };
 }
