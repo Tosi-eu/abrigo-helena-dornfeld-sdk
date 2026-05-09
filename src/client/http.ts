@@ -30,6 +30,7 @@ export type HttpRequestInit = {
   responseType?: "json" | "blob" | "text";
   signal?: AbortSignal;
   credentials?: RequestCredentials;
+  treatNotOkAsNull?: boolean;
 };
 
 function normalizeBase(baseUrl: string): string {
@@ -139,6 +140,9 @@ export class StokioHttp {
 
     const data = (await res.json().catch(() => null)) as unknown;
     if (!res.ok) {
+      if (init?.treatNotOkAsNull) {
+        return null as T;
+      }
       const rawMsg = extractApiErrorMessage(data);
       const err = new StokioApiError({
         message: rawMsg,
@@ -185,6 +189,48 @@ export class StokioHttp {
 
   get<T>(path: string, init?: Omit<HttpRequestInit, "body">) {
     return this.request<T>("GET", path, init);
+  }
+
+  async getAllowingNonOk<T>(
+    path: string,
+    init?: Omit<HttpRequestInit, "body">,
+  ): Promise<{ status: number; data: T | null }> {
+    const method = "GET" as const;
+    await this.cfg.onBeforeRequest?.({ path, method, body: undefined });
+
+    const token =
+      this.cfg.getToken != null
+        ? await Promise.resolve(this.cfg.getToken())
+        : null;
+    const extra =
+      this.cfg.getExtraHeaders != null
+        ? await Promise.resolve(this.cfg.getExtraHeaders())
+        : undefined;
+
+    const fetchFn = this.cfg.fetchImpl ?? globalThis.fetch.bind(globalThis);
+    const rel = path.startsWith("/") ? path : `/${path}`;
+    const url = `${normalizeBase(this.cfg.baseUrl)}${rel}${buildQueryString(init?.params)}`;
+
+    const baseHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    if (token) baseHeaders.Authorization = `Bearer ${token}`;
+
+    const headers = mergeHeaders(
+      baseHeaders as HeadersInit,
+      mergeHeaders(extra, init?.headers),
+    );
+
+    const res = await fetchFn(url, {
+      method: "GET",
+      credentials: init?.credentials ?? "include",
+      headers,
+      signal: init?.signal,
+    });
+
+    const data = (await res.json().catch(() => null)) as T | null;
+    return { status: res.status, data };
   }
 
   post<T>(

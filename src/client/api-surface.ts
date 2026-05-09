@@ -10,7 +10,8 @@ import type {
   AdminMetricsResponse,
   AdminMovementsThisMonthResponse,
   AdminNotificationsResponse,
-  AdminSystemConfig,
+  AdminConfigApiResponse,
+  AdminConfigPutBody,
   AdminTenant,
   AdminTenantsResponse,
   CreateAdminUserPayload,
@@ -21,8 +22,10 @@ import type {
   CreateTenantInviteResponse,
   CurrentUserResponse,
   DisplayConfigResponse,
+  LoginTenantsForEmailResponse,
   RegisterAccountResponse,
   RegisterUserResponse,
+  ResolveTenantByLoginResponse,
   VerifyContractCodeResponse,
 } from "../contracts/auth.js";
 import type { ResidentListItem } from "../contracts/catalog.js";
@@ -47,6 +50,7 @@ import type {
   UpdateTenantModulesPayload,
 } from "../contracts/tenant.js";
 import type {
+  TenantBrandingApiResponse,
   TenantConfigResponse,
   UpdateTenantBrandingPayload,
 } from "../entities/tenant.js";
@@ -549,6 +553,16 @@ export function buildStokioApi(http: StokioHttp) {
       resetPassword: (login: string, newPassword: string) =>
         http.post("/login/reset-password", { login, newPassword }),
       updateUser: (payload: Record<string, unknown>) => http.put("/login", payload),
+      tenantsForEmail: (login: string) =>
+        http.getAllowingNonOk<LoginTenantsForEmailResponse>(
+          "/login/tenants-for-email",
+          { params: { login: login.trim() } },
+        ),
+      resolveTenantByLogin: (login: string) =>
+        http.getAllowingNonOk<ResolveTenantByLoginResponse>(
+          "/login/resolve-tenant",
+          { params: { login: login.trim() } },
+        ),
     },
 
     tenant: {
@@ -609,6 +623,11 @@ export function buildStokioApi(http: StokioHttp) {
     public: {
       listTenants: (params?: { q?: string; limit?: number }) =>
         http.get<{ data: PublicTenantListItem[] }>("/tenants", { params: params ?? {} }),
+      tenantBrandingBySlug: (slug: string) =>
+        http.get<TenantBrandingApiResponse | null>(
+          `/tenants/${encodeURIComponent(slug.trim())}/branding`,
+          { treatNotOkAsNull: true },
+        ),
       appConfig: () => http.get<PublicAppConfigResponse>("/public/app-config"),
       verifyTenantContractCode: (tenantSlug: string, contractCode: string) =>
         http.post<VerifyContractCodeResponse>(
@@ -735,9 +754,9 @@ export function buildStokioApi(http: StokioHttp) {
       },
 
       config: {
-        get: () => http.get<AdminSystemConfig>("/admin/config"),
-        update: (config: AdminSystemConfig) =>
-          http.put<AdminSystemConfig>("/admin/config", config),
+        get: () => http.get<AdminConfigApiResponse>("/admin/config"),
+        update: (body: AdminConfigPutBody) =>
+          http.put<AdminConfigApiResponse>("/admin/config", body),
       },
 
       tenants: {
